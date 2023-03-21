@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 """
-a script that adds the State object “Louisiana” to the
-database hbtn_0e_6_usa
+create state "California" with city attribute "San Francisco"
+parameters given to script: username, password, database
 """
 
 from sys import argv
-from model_state import Base, State
+from relationship_state import Base, State
+from relationship_city import City
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -22,11 +23,13 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # add new state and commit to table
-    new = State(name="Louisiana")
-    session.add(new)
+    # create state "California" with city attribute "San Francisco"
+    new_s = State(name="California")
+    new_c = City(name="San Francisco")
+    new_s.cities.append(new_c)
+
+    session.add(new_s)
+    session.add(new_c)
+
     session.commit()
-
-    print("{:d}".format(new.id))
-
     session.close()

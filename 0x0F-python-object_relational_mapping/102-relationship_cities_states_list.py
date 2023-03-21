@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """
-a script that adds the State object “Louisiana” to the
-database hbtn_0e_6_usa
+a script that lists all City objects from the database hbtn_0e_101_usa
 """
 
 from sys import argv
-from model_state import Base, State
+from relationship_state import Base, State
+from relationship_city import City
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -22,11 +22,9 @@ if __name__ == "__main__":
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # add new state and commit to table
-    new = State(name="Louisiana")
-    session.add(new)
-    session.commit()
-
-    print("{:d}".format(new.id))
+    # use table relationship to access and print city and state
+    rows = session.query(City).order_by(City.id).all()
+    for city in rows:
+        print("{}: {} -> {}".format(city.id, city.name, city.state.name))
 
     session.close()
