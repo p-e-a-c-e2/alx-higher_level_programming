@@ -1,31 +1,26 @@
 #!/usr/bin/node
+
+const url = process.argv[2];
 const request = require('request');
 
-const apiUrl = process.argv[2];
-
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  const todos = JSON.parse(body);
-  const completedTasksByUser = {};
-
-  todos.forEach((todo) => {
-    if (todo.completed) {
-      if (!completedTasksByUser[todo.userId]) {
-        completedTasksByUser[todo.userId] = 1;
-      } else {
-        completedTasksByUser[todo.userId]++;
+request(url, function (err, response, body) {
+  if (err) {
+    console.log(err);
+  } else if (response.statusCode === 200) {
+    const dic = {};
+    const tasks = JSON.parse(body);
+    for (const i in tasks) {
+      if (tasks[i].completed) {
+        if (dic[tasks[i].userId] === undefined) {
+          dic[tasks[i].userId] = 1;
+        } else {
+          dic[tasks[i].userId]++;
+        }
       }
     }
-  });
-
-  Object.keys(completedTasksByUser)
-    .forEach((userId) => {
-      console.log(`${userId}: ${completedTasksByUser[userId]}`);
-
-    });
+    console.log(dic);
+  } else {
+    console.log('Error code: ' + response.statusCode);
+  }
 });
 
